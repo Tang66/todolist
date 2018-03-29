@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>todolist</title>
+	<style type="text/css">
+		* {margin: 0; padding: 0; color: #6c6c6c;}
+		#container {width: 580px; background: #eeeeee; margin: 0 auto; padding: 30px 150px 100px; position: relative;}
+		td, th {width: 150px; text-align: center; border: 1px solid lightgray; height: 40px;}
+		input {width: 600px; height: 40px; border-radius: 5px; border: 1px solid lightgray; margin: 15px 0 30px 0; text-indent: 1em; font-size: 16px;}
+		.add {display: block; background: #428bca; width: 400px; margin: 10px auto; color: white;}
+		.danger {display: block; background: #c5000e; width: 400px; margin: 15px auto; color: white;}
+		h3 {margin: 70px 0 30px 0;}
+		table {border-collapse: collapse;}
+		button {width: 100px; height: 25px; background: #428bca; border: 1px solid lightgray; border-radius: 5px; color: white;}
+		.delAll {background: #c5000e; width: 200px; height: 30px;}
+		#hidden {width: 500px; height: 200px; background: black; font-size: 40px; color: #333; position: absolute; top: 0; left: 0; right: 0; bottom: 0; margin: auto; border-radius: 5px; border: 1px solid gray; background: lightgray; text-align: center; padding-top: 100px;}
+		#hidden button {margin-top: 80px; width: 100px; height: 30px;}
+		h2 {text-align: left; margin-bottom: 10px; border-bottom: 1px solid lightgray; padding-bottom: 30px; color: #FB7D28;}
+		#btn {width: 50px; height: 50px; font-size: 50px; background: transparent; border: none; color: lightgray; text-align: center; text-shadow: 0 0 3px gray;}
+
+		.gray {background: lightgray;}
+	</style>
+</head>
+<body>
+	<div id="container" v-cloak>
+		<h2>ToDoList</h2>
+		<div @click="fn1()" id="btn">{{txt}}</div>
+		<div v-show=bol>
+			<form style="margin-top: 20px;">
+				<label>待办日期</label>
+				<br/>
+				<input type="text" placeholder="输入待办日期" v-model='username'></input>
+				<br/>
+				<label>待办事项描述：</label>
+				<br/>
+				<input type="text" placeholder="输入待办事项描述" v-model='age'></input>
+				<br/>
+				
+			</form>
+				<input type="submit" value="添加" v-on:click.prevent='add()' class="add"></button>
+		</div>
+
+
+		<h3>待办事项列表</h3>
+		<table style="border: outset;">
+			<tr>
+				<th>序号</th>
+				<th>待办日期</th>
+				<th style="width: 200px">事项描述</th>
+				<th>是否删除</th>
+			</tr>
+			<tr v-for="(item,index) in mydata" v-on:click='item.isActive=!item.isActive' :class='{gray: item.isActive}'>
+				<td>{{ index+1 }}</td>
+				<td>{{ item.name }}</td>
+				<td>{{ item.age }}</td>
+				<td><button type="checked" v-on:click.stop='nowIndex=index; hidden=true;'>删除</button></td>
+			</tr>
+			<tr v-show='mydata.length==0'>
+				<td colspan="4">无</td>
+			</tr>
+			<tr v-show='mydata.length!=0'>
+				<td colspan="4"><button class="delAll">删除全部</button></td>
+			</tr>
+		</table>
+		
+		<div id="hidden" v-show='hidden'>
+			确认删除吗？
+			<br/>
+			<button v-on:click='cancel'>取消</button>
+			<button v-on:click='certain(nowIndex)'>确认</button>
+		</div>
+	</div>
+</body>
+</html>
+<script src="vue.js"></script>
+<script>
+	var btn = document.getElementById('btn');
+
+	var vm = new Vue({
+		el: '#container',
+		data: {
+			mydata: [
+				// {name:'sfs', age:111, i:0}
+			],
+			username: '',
+			age: '',
+			hidden: false,
+			nowIndex: -100,
+			bol:false,
+			txt:'+',
+			a: false,
+			// 变量来记录tr的状态
+			// isActive:
+		},
+		methods: {
+			add: function () {
+				this.mydata.push(
+					{name:this.username, age:this.age, isActive: false}
+				);
+				this.username = '';
+				this.age = '';
+			},
+			del: function () {
+				this.hidden = true;
+			},
+			cancel: function () {
+				this.hidden = false;
+			},
+			certain: function (i) {
+				this.hidden = false;
+				this.mydata.splice(i,1);
+			},
+			fn1: function () {
+				this.bol = !this.bol;
+				// this.bol1 = !this.bol1;
+				// btn.style.display = 'none';
+				this.txt = this.txt=='-'?'+':'-';
+			},
+
+			fn: function (i) {
+				// body...
+				this.mydata[i].isActive = !this.mydata[i].isActive;
+			}
+		}
+	});
+
+</script>
